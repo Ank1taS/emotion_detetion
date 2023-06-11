@@ -65,3 +65,11 @@ print(data_set.dtypes)
 print(data_set['Text'][323])
 data_set['Text'] = data_set['Text'].apply(get_clean_text)
 print(data_set['Text'][323])
+
+# forms word cloud / tokens
+words = ' '.join([token for token in data_set['Text']])
+word_cloud = WordCloud(width=1000, height=1000, random_state=21, min_font_size=20, max_font_size=120).generate(words)
+plt.figure(figsize=(20,20))
+plt.imshow(word_cloud, interpolation='spline16')
+plt.axis('off')
+plt.savefig("wordcould.png")
