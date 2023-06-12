@@ -5,9 +5,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import sklearn
 from sklearn.model_selection import train_test_split
-from sklearn.feature_selection import chi2
-from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.feature_selection import chi2
+# from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import CountVectorizer
+
 from sklearn.naive_bayes import MultinomialNB
 from wordcloud import WordCloud
 
@@ -21,6 +23,9 @@ print(data)
 
 print(f"shape of data set:  {data_set.shape}")
 
+# print each emotion count in data set
+emotions = data_set['Emotion'].value_counts()
+print(emotions)
 # check for null values
 print(data.isnull().sum())
 
@@ -73,3 +78,16 @@ plt.figure(figsize=(20,20))
 plt.imshow(word_cloud, interpolation='spline16')
 plt.axis('off')
 plt.savefig("wordcould.png")
+
+# CountVectorizer to converting a collection of text documents into a matrix of token counts.
+vectorizer = CountVectorizer(max_features=1500, min_df=5, max_df = 0.7, stop_words='english')
+X = vectorizer.fit_transform(data_set['Text']).toarray()
+# The goal of using tf-idf instead of the raw frequencies of occurrence of a token in a given document is to scale down the impact of tokens that occur very frequently in a given corpus and that are hence empirically less informative than features that occur in a small fraction of the training corpus.
+# TfidfTransformer object from the scikit-learn library. The TfidfTransformer is used to transform a count matrix (such as the one obtained from CountVectorizer) into a TF-IDF (Term Frequency-Inverse Document Frequency) representation.
+tfidfconverter = TfidfTransformer()
+X = tfidfconverter.fit_transform(X).toarray()
+
+# split data_set into training set and testing set
+X_train, X_test, y_train, y_test = train_test_split(X, data_set['Emotion'], test_size=0.18, random_state=0)
+
+
