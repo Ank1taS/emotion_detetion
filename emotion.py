@@ -9,8 +9,9 @@ from sklearn.model_selection import train_test_split
 # from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
-
+from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
+import sklearn.metrics as metrics
 from wordcloud import WordCloud
 
 # read data-set
@@ -90,4 +91,32 @@ X = tfidfconverter.fit_transform(X).toarray()
 # split data_set into training set and testing set
 X_train, X_test, y_train, y_test = train_test_split(X, data_set['Emotion'], test_size=0.18, random_state=0)
 
+# ========== RandomForestClassifier ==========
+from sklearn.ensemble import RandomForestClassifier
+classifier1 = RandomForestClassifier(n_estimators=100, random_state=0)
+classifier1.fit(X_train, y_train)
+
+y_predict = classifier1.predict(X_test)
+
+print("Accuracy[RandomForestClassifier]: ", metrics.accuracy_score(y_test, y_predict))
+
+# predicts the class or label for a new input using a trained classifier model. It uses the predict method of the classifier to make predictions on a new text input, which is represented as a feature vector using a vectorizer object.
+print(classifier1.predict(vectorizer.transform(["my pc is broken but i am really very happy as i got a new pc from my wife "])))
+
+# =========== logisticRegression ============
+lr = LogisticRegression(max_iter=1000, multi_class='multinomial')
+lr.fit(X_train, y_train)
+y_predict_logistic_regression = lr.predict(X_test)
+accuracy = metrics.accuracy_score(y_test, y_predict_logistic_regression)
+
+print("Accuracy[Logistic regression]: ", accuracy)
+print(lr.predict(vectorizer.transform(["my pc is broken but i am really very happy as i got a new pc from my wife "])))
+
+# =========== Multinomial Naive Bayes ===========
+classifier3 = MultinomialNB()
+classifier3.fit(X_train, y_train)
+y_predict2 = classifier3.predict(X_test)
+
+print("Accuracy[Multinomial Naive Bayes]: ", metrics.accuracy_score(y_test, y_predict2))
+print(classifier3.predict(vectorizer.transform(["my pc is broken but i am really very happy as i got a new pc from my wife "])))
 
